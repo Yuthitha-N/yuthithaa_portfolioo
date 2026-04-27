@@ -8,6 +8,11 @@ dotenv.config()
 
 const app = express()
 
+// ✅ TEST ROUTE (TOP PRIORITY)
+app.get("/test", (req, res) => {
+  res.send("Backend is working!")
+})
+
 // ✅ MIDDLEWARE
 app.use(cors({
   origin: [
@@ -20,11 +25,7 @@ app.use(express.json())
 
 // ✅ ROOT ROUTE
 app.get("/", (req, res) => {
-  res.status(200).json({
-    message: "✅ Backend is running successfully",
-    status: "online",
-    version: "1.0.0",
-  })
+  res.send("<h1>✅ Backend is running successfully</h1><p>Visit /api/contact for API endpoints.</p>")
 })
 
 // ✅ HEALTH CHECK
@@ -37,6 +38,25 @@ app.get("/health", (req, res) => {
 
 // ✅ ROUTES
 app.use("/api/contact", contactRoutes)
+
+// ✅ 404 HANDLER (CATCH ALL)
+app.use((req, res) => {
+  console.log(`⚠️ 404 - Not Found: ${req.method} ${req.originalUrl}`)
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.originalUrl} not found on this server`,
+  })
+})
+
+// ✅ ERROR HANDLER
+app.use((err, req, res, next) => {
+  console.error("❌ Global Error:", err.stack)
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+    error: process.env.NODE_ENV === "development" ? err.message : undefined,
+  })
+})
 
 // ✅ MONGODB CONNECTION
 let isDBConnected = false
@@ -59,10 +79,11 @@ const connectDB = async () => {
   }
 }
 
-// ✅ START SERVER IMMEDIATELY
+// ✅ START SERVER
 const PORT = process.env.PORT || 5000
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`)
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server is definitely running on port ${PORT}`)
+  console.log(`🏠 Access it at http://0.0.0.0:${PORT}`)
 })
 
 // ✅ TRY TO CONNECT TO DB
