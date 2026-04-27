@@ -18,13 +18,31 @@ app.use(express.json())
 app.use("/api/contact", contactRoutes)
 
 // ✅ MONGODB CONNECTION
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Error:", err.message))
+let isDBConnected = false
 
-// ✅ SERVER START
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
+      retryWrites: true,
+      maxPoolSize: 10,
+    })
+    isDBConnected = true
+    console.log("✅ MongoDB Connected Successfully")
+  } catch (err) {
+    isDBConnected = false
+    console.error("❌ MongoDB Connection Error:", err.message)
+    console.log("⚠️ Server starting without database - you need to fix the MongoDB connection")
+  }
+}
+
+// ✅ START SERVER IMMEDIATELY
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
 })
+
+// ✅ TRY TO CONNECT TO DB
+connectDB()

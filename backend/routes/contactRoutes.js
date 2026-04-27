@@ -1,5 +1,6 @@
 import express from "express"
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose"
 import Contact from "../models/Contact.js"
 
 const router = express.Router()
@@ -15,6 +16,14 @@ router.post("/", async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
+      })
+    }
+
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        message: "Database is not connected. Please try again in a moment.",
       })
     }
 
