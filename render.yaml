@@ -1,0 +1,31 @@
+services:
+  # Frontend Service
+  - type: web
+    name: yuthithaa-portfolioo
+    root: .
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://yuthithaa-backend.onrender.com
+    routes:
+      - path: /api
+        rewrite: /api
+
+  # Backend Service
+  - type: web
+    name: yuthithaa-backend
+    root: backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT
+        value: "5000"
