@@ -1,5 +1,4 @@
 services:
-  # Frontend Service
   - type: web
     name: yuthithaa-portfolioo
     root: .
@@ -9,11 +8,7 @@ services:
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://yuthithaa-backend.onrender.com
-    routes:
-      - path: /api
-        rewrite: /api
 
-  # Backend Service
   - type: web
     name: yuthithaa-backend
     root: backend
@@ -21,11 +16,11 @@ services:
     buildCommand: npm install
     startCommand: npm start
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: MONGO_URI
-        sync: false
+        value: mongodb+srv://yuthithan23cse_db_user:21-Mar-06@cluster0.y9eormq.mongodb.net/?appName=Cluster0
       - key: JWT_SECRET
-        sync: false
+        value: mySuperSecretKey
       - key: PORT
         value: "5000"
+      - key: NODE_ENV
+        value: production
