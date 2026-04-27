@@ -18,6 +18,23 @@ app.use(cors({
 }))
 app.use(express.json())
 
+// ✅ ROOT ROUTE
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "✅ Backend is running successfully",
+    status: "online",
+    version: "1.0.0",
+  })
+})
+
+// ✅ HEALTH CHECK
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+  })
+})
+
 // ✅ ROUTES
 app.use("/api/contact", contactRoutes)
 
